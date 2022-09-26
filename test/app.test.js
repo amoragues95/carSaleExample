@@ -1,4 +1,4 @@
-const app = require('../app');
+const {app, server} = require('../app');
 const request = require('supertest');
 const {assert} = require('chai');
 const db = require('../models/index');
@@ -7,6 +7,10 @@ const db = require('../models/index');
 beforeEach(() => {
     db.sequelize.truncate({ cascade: true })
 });
+
+after(() => {
+    server.close();
+})
 
 describe("GET /users", () => {
     it("check status 200", done => {
@@ -34,7 +38,7 @@ describe("GET /users", () => {
             .expect(200)
             .then(res => {
                 assert.lengthOf(res.body, 1);
-                return done();
+                done();
             })
         }).catch(err => done());
     })
@@ -57,3 +61,28 @@ describe("POST /user", () => {
     })
 });
 
+describe("GET /cars", () => {
+    beforeEach(async () => {
+        let user = db.User.build({"email": "test@gmail.com",
+        "password": "asdasd",
+        "firstName": "Test",
+        "lastName": "Name"})
+        await user.save();
+        await db.car.create({
+            "brand": "Mercedes Benz",
+            "speed": 1999.00,
+            "userId": user.id
+        });
+    })
+
+    it("will test cars", done => {
+        request(app)
+        .get('/cars')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .then(res => {
+            assert.lengthOf(res.body, 1);
+            done();
+        });
+    })
+})

@@ -8,8 +8,11 @@ const { errorLogger, errorParser } = require('./middlewares/errorHandler')
 
 app.use('/', router);
 app.use([errorLogger, errorParser])
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
-module.exports = app;
+module.exports = {
+  app,
+  server
+};

@@ -1,16 +1,18 @@
-const express = require('express')
+const express = require('express');
 const router = express.Router();
-const usersController = require('./controllers/user.js')
-const carsController = require('./controllers/car.js')
+const usersController = require('./controllers/user.js');
+const carsController = require('./controllers/car.js');
 const errorHandler = require('./middlewares/errorHandler');
-const { checkMail } = require('./middlewares/checks')
-const bodyParser = require('body-parser')
+const { checkAdmin, checkLoggedIn, checkLoggedUser, checkMail } = require('./middlewares/checks');
+const bodyParser = require('body-parser');
 
 
 router.use(bodyParser.json())
+router.post('/login', usersController.login)
+router.post('/register', usersController.register)
 router.get('/users', usersController.getUsers)
 router.get('/users/:id',usersController.getUser)
-router.put('/users/:id', usersController.editUser)
+router.put('/users/:id', [checkAdmin] ,usersController.editUser)
 router.delete('/users/:id', usersController.deleteUser)
 router.post('/user', [checkMail], usersController.addUser)
 router.get('/cars', carsController.getCars)
