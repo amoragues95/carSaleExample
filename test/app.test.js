@@ -1,12 +1,14 @@
 const app = require('../app');
 const request = require('supertest');
-const assert = require('chai').assert;
+const {assert} = require('chai');
 const db = require('../models/index');
-describe("GET /users", () => {
-    beforeEach(() => {
-        db.sequelize.truncate({ cascade: true })
-    });
 
+
+beforeEach(() => {
+    db.sequelize.truncate({ cascade: true })
+});
+
+describe("GET /users", () => {
     it("check status 200", done => {
         request(app)
         .get('/users')
@@ -54,3 +56,4 @@ describe("POST /user", () => {
         .end(done);
     })
 });
+
